@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="Graph Hierarchy Analyzer — process directed edges and visualize tree structures with cycle detection." />
+  <title>BFHL | Graph Hierarchy Analyzer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <div class="bg-orbs" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <main id="app">
+
+    <header class="header fade-in">
+      <div class="logo">
+        <span class="logo-icon">⬡</span>
+        <h1>Graph Hierarchy Analyzer</h1>
+      </div>
+      <p class="subtitle">Parse directed edges · Detect cycles · Visualize trees</p>
+    </header>
+
+
+    <section class="card input-section fade-in" style="animation-delay:.1s">
+      <div class="card-header">
+        <span class="card-badge">INPUT</span>
+        <span class="card-hint">One edge per line, or comma-separated</span>
+      </div>
+
+      <textarea id="edgeInput" placeholder="A->B&#10;A->C&#10;B->D&#10;C->E" spellcheck="false" rows="6"></textarea>
+
+      <div class="input-actions">
+        <button id="btnSample" class="btn btn-ghost" type="button">
+          <span class="btn-icon">✦</span> Load Sample
+        </button>
+        <button id="btnClear" class="btn btn-ghost" type="button">
+          <span class="btn-icon">✕</span> Clear
+        </button>
+        <button id="btnSubmit" class="btn btn-primary" type="button">
+          <span class="btn-icon">▶</span>
+          <span class="btn-label">Analyze</span>
+          <span class="btn-loader" hidden>
+            <span class="spinner"></span>
+          </span>
+        </button>
+      </div>
+    </section>
+
+
+    <div id="results" class="results hidden">
+
+
+      <section class="stats-row fade-in" style="animation-delay:.2s">
+        <div class="stat-card" id="statTrees">
+          <span class="stat-value">—</span>
+          <span class="stat-label">Trees</span>
+        </div>
+        <div class="stat-card" id="statCycles">
+          <span class="stat-value">—</span>
+          <span class="stat-label">Cycles</span>
+        </div>
+        <div class="stat-card" id="statLargest">
+          <span class="stat-value">—</span>
+          <span class="stat-label">Largest Root</span>
+        </div>
+        <div class="stat-card" id="statInvalid">
+          <span class="stat-value">—</span>
+          <span class="stat-label">Invalid</span>
+        </div>
+        <div class="stat-card" id="statDuplicates">
+          <span class="stat-value">—</span>
+          <span class="stat-label">Duplicates</span>
+        </div>
+      </section>
+
+
+      <section class="card fade-in" style="animation-delay:.3s" id="hierarchiesSection">
+        <div class="card-header">
+          <span class="card-badge">HIERARCHIES</span>
+          <div class="tab-group" id="viewTabs">
+            <button class="tab active" data-view="tree">🌳 Tree</button>
+            <button class="tab" data-view="json">{ } JSON</button>
+          </div>
+        </div>
+        <div id="hierarchiesContent" class="hierarchies-content"></div>
+      </section>
+
+
+      <section class="card fade-in" style="animation-delay:.4s" id="validationSection">
+        <div class="card-header">
+          <span class="card-badge">VALIDATION</span>
+        </div>
+        <div id="validationContent" class="validation-content"></div>
+      </section>
+
+
+      <section class="card fade-in" style="animation-delay:.5s">
+        <div class="card-header clickable" id="rawToggle">
+          <span class="card-badge">RAW RESPONSE</span>
+          <span class="toggle-icon">▸</span>
+        </div>
+        <pre id="rawJson" class="raw-json collapsed"><code></code></pre>
+      </section>
+    </div>
+
+
+    <div id="errorToast" class="toast hidden" role="alert"></div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
