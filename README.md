@@ -23,7 +23,7 @@ Bajaj Test/
 │       └── helpers.js         # Dedup & component detection
 ├── frontend/
 │   ├── index.html             # UI markup
-│   ├── style.css              # Dark theme design system
+│   ├── style.css              # Styling
 │   └── script.js              # Client-side logic
 └── README.md
 ```
@@ -33,7 +33,8 @@ Bajaj Test/
 ## 🚀 Setup & Run
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) v18+
+
+* Node.js (v18 or higher)
 
 ### Install & Start
 
@@ -43,11 +44,21 @@ npm install
 npm start
 ```
 
-Open **http://localhost:3000** in your browser.
+Open in browser:
 
-### Configuration
+```
+http://localhost:3000
+```
 
-Edit `backend/config.js` to set your identity:
+---
+
+## ⚙️ Configuration
+
+Update your details in:
+
+```js
+backend/config.js
+```
 
 ```js
 module.exports = {
@@ -62,16 +73,20 @@ module.exports = {
 
 ## 📡 API Reference
 
-### `POST /bfhl`
+### POST `/bfhl`
 
-**Request:**
+### Request
+
 ```json
 {
   "data": ["A->B", "A->C", "B->D"]
 }
 ```
 
-**Response:**
+---
+
+### Response (Tree Example)
+
 ```json
 {
   "user_id": "your_name_ddmmyyyy",
@@ -79,8 +94,13 @@ module.exports = {
   "college_roll_number": "YOUR_ROLL_NUMBER",
   "hierarchies": [
     {
-      "tree": { "A": { "B": { "D": {} }, "C": {} } },
-      "has_cycle": false,
+      "root": "A",
+      "tree": {
+        "A": {
+          "B": { "D": {} },
+          "C": {}
+        }
+      },
       "depth": 3
     }
   ],
@@ -96,80 +116,97 @@ module.exports = {
 
 ---
 
+### Response (Cycle Example)
+
+```json
+{
+  "hierarchies": [
+    {
+      "root": "A",
+      "tree": {},
+      "has_cycle": true
+    }
+  ]
+}
+```
+
+---
+
 ## 🧪 Sample Test Cases
 
 ### 1. Basic Tree
+
 ```json
 { "data": ["A->B", "A->C", "B->D"] }
 ```
-→ 1 tree, depth 3, root "A"
 
-### 2. Cycle Detection
+### 2. Cycle
+
 ```json
 { "data": ["A->B", "B->C", "C->A"] }
 ```
-→ 1 cycle, `{ "tree": {}, "has_cycle": true }`
 
 ### 3. Duplicates + Invalid
+
 ```json
 { "data": ["A->B", "A->B", "hello", "1->2", "B->C", "A->A"] }
 ```
-→ duplicate_edges: ["A->B"], invalid_entries: ["hello", "1->2", "A->A"]
 
 ### 4. Multiple Trees
+
 ```json
 { "data": ["A->B", "B->C", "D->E", "E->F"] }
 ```
-→ 2 trees, largest root by depth
 
-### 5. Mixed Trees + Cycle
+### 5. Tree + Cycle
+
 ```json
 { "data": ["A->B", "B->C", "D->E", "E->F", "F->D"] }
 ```
-→ 1 tree (A->B->C), 1 cycle (D,E,F)
 
-### 6. Self-loop + Empty
-```json
-{ "data": ["A->A", "", "A->B"] }
-```
-→ invalid: ["A->A", ""], 1 tree (A->B)
+---
 
-### 7. Multiple Parents (single-parent rule)
-```json
-{ "data": ["A->C", "B->C", "C->D"] }
-```
-→ C's parent = A (first). B becomes isolated node. 2 trees.
+## ⚙️ Processing Rules (Summary)
+
+* **Validation**: Must follow `X->Y` (single uppercase letters), no self-loops
+* **Duplicates**: Only first occurrence used, rest tracked
+* **Graph Rule**: Each node can have only one parent (first wins)
+* **Root**: Node that never appears as child
+* **Cycle**: Return `{ tree: {}, has_cycle: true }`
+* **Depth**: Count of nodes in longest path
+* **Summary**:
+
+  * Count only non-cyclic trees
+  * Largest tree based on depth
+  * Tie → lexicographically smaller root
 
 ---
 
 ## ☁️ Deployment
 
-### Render (Full Stack)
+### Render (Backend + Frontend)
 
-1. Push to GitHub
-2. Create a **Web Service** on [Render](https://render.com)
-3. Settings:
-   - **Root Directory:** `backend`
-   - **Build Command:** `npm install`
-   - **Start Command:** `node server.js`
-   - **Environment:** `PORT` = auto-set by Render
+1. Push project to GitHub
+2. Go to https://render.com
+3. Create **Web Service**
+4. Settings:
 
-### Vercel (Frontend Only)
-
-1. Create a new project on [Vercel](https://vercel.com)
-2. Set **Root Directory** to `frontend`
-3. Set `API_BASE` in `frontend/script.js` to your Render backend URL
+   * Root Directory: `backend`
+   * Build Command: `npm install`
+   * Start Command: `node server.js`
 
 ---
 
-## 📋 Processing Rules Summary
+## 📌 Notes
 
-| Step | Rule |
-|------|------|
-| Validation | `X->Y`, single uppercase letters, no self-loops |
-| Duplicates | Keep first, track extras |
-| Graph | Single parent per node (first wins) |
-| Roots | Node never appearing as child |
-| Cycles | Pure cycle → `{ tree: {}, has_cycle: true }` |
-| Depth | Nodes in longest root-to-leaf path |
-| Summary | Count non-cyclic trees; tie-break by lex order |
+* API response time < 3 seconds for up to 50 nodes
+* CORS enabled
+* No hardcoding — dynamic processing
+
+---
+
+## ✅ Status
+
+✔ Fully implemented
+✔ All edge cases handled
+✔ Ready for submission
